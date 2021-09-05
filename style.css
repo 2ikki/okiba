@@ -1,60 +1,70 @@
 html {
   font-size: 62.5%;
+  align-content: center;
+}
+h1 {
+  font-size: 6rem;
+  text-align: center;
+  margin-top: 20px;
+  font-family: serif;
 }
 .cont {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content:flex-start;
-  justify-content: space-between;
+  justify-content:space-around;
 }
-.cont::after{
-  display: block;
-  width: 100px;
-}
+
 .card {
+  overflow: hidden;
   position: relative;
   transition: 0.5s;
-  width: 200px;
-  height: 100px;
+  width: 400px;
+  height: 200px;
+  margin: 20px 10px;
   border: 1px solid black;
-  border-radius: 5px;
-  box-shadow: 5px 5px 5px 0px #2a6d97;
-  padding: 0;
-  margin:10;
+  border-radius: 10px;
+  box-shadow: 5px 5px 20px 0px #2a6d97;
 }
-.card a{
-  display: block;
-  text-align: left;
-  padding-left: 10px;
-  line-height: 100px;
-  text-decoration: none;
-  font-size: 2.4rem;
-  color: #2a6d97;
-
+.card::after{
+  width: 400px;
+  height: 200px;
 }
-.cardon{
+.card span{
+  position: absolute;
+  margin: 0;
+  top: 50%;
+  transform: translate(0,-50%);
+  left: 20px;
+  font-size: 6rem;
+  line-height: 6rem;
+  color: black;
+}
+.title {
+  position: relative;
   height: 200px;
 }
 .card img {
   position: absolute;
   right: 0;
   top: 0;
-  padding-top: 13%;
-  padding-bottom: 13%;
+  height: 100px;
   transition: 0.5s;
+  margin: 0;
+  padding: 50 0;
 }
 .open{
-  height: 200;
+  height: 400px;
 }
 .img_open{
   transform: rotate(180deg);
 }
 .card p {
-  display: none;
-  font-size: 1.5rem;
-  line-height: 1.6rem;
+  font-size: 2.5rem;
   padding-left: 10px;
   padding-right: 10px;
   padding-top:0px;
-  margin-top: 0px;
+  margin-top: 5px;
 }
