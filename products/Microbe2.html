@@ -1,0 +1,189 @@
+<!doctype html>
+ 
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    
+    <title>Microbe2</title>
+    <meta name="description" content="何種類か同時に生まれます。
+星を食べると増えます。
+4ぬと星になります。
+見守ってあげましょう。かわいい。" />
+    
+    <style>*, *:before, *:after {
+  box-sizing: border-box; 
+}
+html {
+  font-size: 13px;
+}
+body {
+  font-family: Avenir, "Open Sans", "Helvetica Neue", Helvetica, Arial, Verdana, Roboto, "游ゴシック", "Yu Gothic", "游ゴシック体", "YuGothic", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "Meiryo UI", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+  color: #444;
+  background-color: hsl(0, 0%, 96%);
+}
+h1 {
+  font-size: 1.8rem;
+}
+
+</style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/gh/phinajs/phina.js@v0.2.3/build/phina.js"></script>
+    <script>
+var SCREENX = 720;
+var SCREENY = 1280;
+
+var SPEED = 10;
+
+var Mnum = 10;
+var Enum = 30;
+
+var Msize = 30;
+var Esize = 20;
+
+  // グローバルに展開
+phina.globalize();
+
+// Microbe初期値
+phina.define('Microbe', {
+  
+  superClass: 'CircleShape',
+  
+  init: function(){
+    
+    this.superInit();
+    
+    this.radius = Msize;
+    this.LP = 100;
+    
+    var D = Math.randint(0,360);
+    
+    var Light = Math.randint(30,80);
+    
+    this.fill = 'hsl('+D+',100%,'+Light+'%)';
+    
+    var VX = Math.cos(D*(Math.PI/180)) * SPEED;
+    var VY = Math.sin(D*(Math.PI/180)) * SPEED;
+    
+    this.physical.velocity = Vector2(VX, VY);
+    
+    //update
+    this.update = function(){
+      if(this.top < 0){
+        this.top = 0;
+        this.physical.velocity.y *= -1;
+      }
+      if(this.left < 0){
+        this.left = 0;
+        this.physical.velocity.x *= -1;
+      }
+      if(this.bottom > SCREENY){
+        this.bottom = SCREENY;
+        this.physical.velocity.y *= -1;
+      }
+      if(this.right > SCREENX){
+        this.right = SCREENX;
+        this.physical.velocity.x *= -1;
+      }
+    };
+  },
+});
+
+// Energy初期値
+phina.define('Energy', {
+  superClass: 'StarShape',
+  
+  init: function(){
+    
+    this.superInit();
+    
+    this.fill = 'lightgreen';
+    this.radius = Esize;
+  }
+  
+});
+/*
+ * メインシーン
+ */
+phina.define("MainScene", {
+  // 継承
+  superClass: 'DisplayScene',
+  width: SCREENX,
+  height: SCREENY,
+  // 初期化
+  init: function(option) {
+    // 親クラス初期化
+    this.superInit(option);
+    // 背景色
+    this.backgroundColor = 'white';
+
+    
+    // Energyクループ作成
+    var EGroup = DisplayElement().addChildTo(this);
+    // 生成
+    (Enum).times(function(){
+      Energy().setPosition(Math.randint(0, SCREENX), Math.randint(0, SCREENY)).addChildTo(EGroup);
+    });
+    
+    this.EG = EGroup;
+    
+    // グループ作成
+    var MGroup = DisplayElement().addChildTo(this);
+    // 生成
+    (Mnum).times(function(){
+      Microbe().setPosition(SCREENX/2, SCREENY/2).addChildTo(MGroup);
+    });
+    
+    this.MG = MGroup;
+
+  },
+  
+  update: function(){
+    
+    var MGroup = this.MG;
+    var EGroup = this.EG;
+
+    MGroup.children.each(function(M){
+              
+        M.LP -= 1;
+        
+        if(M.LP <= 0){
+          M.remove();
+          Energy().setPosition(M.x, M.y).addChildTo(EGroup);
+        }
+        
+    });
+    
+    MGroup.children.each(function(M){
+      EGroup.children.each(function(E){
+
+        if(M.hitTestElement(E)){
+          E.remove();
+          var newM = Microbe().setPosition(M.x, M.y).addChildTo(MGroup);
+          newM.fill = M.fill;
+        }
+        
+      });
+    });
+    
+  }
+  
+});
+/*
+ * メイン処理
+ */
+phina.main(function() {
+  // アプリケーションを生成
+  var app = GameApp({
+    // MainScene から開始
+    startLabel: 'main',
+    width: SCREENX,
+    height: SCREENY,
+  });
+  // 実行
+  app.run();
+});</script>
+  </body>
+</html>
